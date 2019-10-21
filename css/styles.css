@@ -44,6 +44,11 @@ h2 {
     margin: 0;
 }
 
+p {
+    text-transform: capitalize;
+    font-size: 30px;
+}
+
 button {
     margin: 6px;
     border: 1px solid transparent;
@@ -97,7 +102,31 @@ button {
 .show {
     color: #000;
     background-color: #76CE82;
+    animation: shake .5s ease-in-out backwards;
 }
+
+/* Keyframes */
+@keyframes shake {
+    0% {
+        transform: scale(0) rotate(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: scale(1.1) rotate(-5deg);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: scale(1.1) rotate(5deg);
+    }
+}
+
 
 /* Keyboard */
 

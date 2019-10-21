@@ -1,10 +1,11 @@
 const overlay = document.getElementById('overlay');
-const startButton = overlay.querySelector('.btn__reset');
+const resetButton = overlay.querySelector('.btn__reset');
 
 const phrase = document.getElementById('phrase');
 const ul = phrase.querySelector('ul');
 const qwerty = document.getElementById('qwerty');
 const scoreboard = document.getElementById('scoreboard');
+const ol = scoreboard.querySelector('ol');
 
 // track of the number of guesses 
 let missed = 0;
@@ -14,7 +15,7 @@ const phrases = [
     'you are what you eat',
     'seek and you shall find',
     'until the cows come home',
-    'a picture is worth a thousand words'
+    'wheel of success'
 ]
 
 
@@ -35,7 +36,7 @@ function addPhraseToDisplay(arr) {
         if (ch === ' ') {
             li.className = 'space';
         } else {
-            li.innerHTML = ch;
+            li.textContent = ch;
             li.className = 'letter';
         }
 
@@ -43,6 +44,8 @@ function addPhraseToDisplay(arr) {
     }
 }
 
+// this function checks if the button the player has chosen
+// match one of the letters
 function checkLetter(btn) {
     const letters = ul.children;
     let match = null;
@@ -51,9 +54,9 @@ function checkLetter(btn) {
         const li = letters[i];
 
         if (li.className === 'letter') {
-            if (li.innerHTML === btn.innerHTML) {
+            if (li.textContent === btn.textContent) {
                 li.className += ' show';
-                match = li.innerHTML;
+                match = li.textContent;
             }
         }
     }
@@ -62,26 +65,90 @@ function checkLetter(btn) {
     return match ? match : null;
 }
 
+// this function set the appropriate screen overlay and text
+function gameResult(result) {
+    const p = document.createElement('p');
+    p.textContent = `you ${result}!`;
+    overlay.appendChild(p);
+
+    overlay.style.display = '';
+    overlay.className = result;
+    resetButton.textContent = 'Try Again';
+}
+
+// this function will check whether the game has been won or lost
 function checkWin() {
     const letter = ul.querySelectorAll('.letter');
     const show = ul.querySelectorAll('.show');
 
     if (letter.length === show.length) {
-        overlay.style.display = '';
-        overlay.className = 'win';
+        gameResult('win');
     } else if (missed >= 5) {
-        overlay.style.display = '';
-        overlay.className = 'lose';
+        gameResult('lose');
     }
 }
 
+// this function creates only the missing tries
+function createTries() {
+    const tries = 5 - ol.children.length;
 
-startButton.addEventListener('click', () => {
+    for (let i = 0; i < tries; i++) {
+        const li = document.createElement('li');
+        const img = document.createElement('img');
+
+        li.className = 'tries';
+        img.src = 'images/liveHeart.png';
+        img.setAttribute('height', '35px');
+        img.setAttribute('width', '30px');
+
+        li.appendChild(img);
+        ol.appendChild(li);
+
+    }
+}
+
+// this function reset the game to default state
+function resetGame() {
+    const p = overlay.querySelector('p');
+    if (overlay.contains(p)) {
+        overlay.removeChild(p);
+    }
+
+    const lists = ul.querySelectorAll('li');
+    lists.forEach(li => {
+        ul.removeChild(li);
+    });
+
+    const buttons = qwerty.querySelectorAll('button');
+    buttons.forEach(btn => {
+        if (btn.disabled) {
+            btn.className = '';
+            btn.disabled = false;
+        }
+    });
+
+    missed = 0;
+    createTries();
+}
+
+// generate random phrase
+function generatePhrase() {
+    const phraseArray = getRandomPhraseAsArray(phrases);
+    // console.log(phraseArray);
+    addPhraseToDisplay(phraseArray);
+}
+
+
+resetButton.addEventListener('click', () => {
     overlay.style.display = 'none';
 
-    const phraseArray = getRandomPhraseAsArray(phrases);
-    addPhraseToDisplay(phraseArray);
-    // console.log(phraseArray);
+    if (missed === 5 || (ul.children.length > 0)) {
+        resetGame();
+        generatePhrase();
+    } else {
+        generatePhrase();
+    }
+
 });
 
 
@@ -93,7 +160,6 @@ qwerty.addEventListener('click', (e) => {
 
         const letterFound = checkLetter(btn);
         if (!letterFound) {
-            const ol = scoreboard.querySelector('ol');
             if (ol.children.length > 0) {
                 const li = ol.querySelector('li:first-child');
                 ol.removeChild(li);
