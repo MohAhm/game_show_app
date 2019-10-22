@@ -11,11 +11,16 @@ const ol = scoreboard.querySelector('ol');
 let missed = 0;
 
 const phrases = [
-    'tell me what you see',
-    'you are what you eat',
-    'seek and you shall find',
-    'until the cows come home',
-    'wheel of success'
+    'Tell me what you see',
+    'You are what you eat',
+    'Seek and you shall find',
+    'Until the cows come home',
+    'A drop in the ocean',
+    'Bad news travels fast',
+    'Change is as good as a rest',
+    'Dollars to doughnuts',
+    'Excuse my French',
+    'Fair and square'
 ]
 
 
@@ -54,7 +59,7 @@ function checkLetter(btn) {
         const li = letters[i];
 
         if (li.className === 'letter') {
-            if (li.textContent === btn.textContent) {
+            if (li.textContent.toLowerCase() === btn.textContent) {
                 li.className += ' show';
                 match = li.textContent;
             }
@@ -69,11 +74,13 @@ function checkLetter(btn) {
 function gameResult(result) {
     const p = document.createElement('p');
     p.textContent = `you ${result}!`;
-    overlay.appendChild(p);
 
-    overlay.style.display = '';
-    overlay.className = result;
-    resetButton.textContent = 'Try Again';
+    setTimeout(() => {
+        overlay.appendChild(p);
+        overlay.style.display = '';
+        overlay.className = result;
+        resetButton.textContent = 'Try Again';
+    }, 1000);
 }
 
 // this function will check whether the game has been won or lost
